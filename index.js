@@ -6,7 +6,7 @@
  */
 
 import inquirer from "inquirer";
-import { conn } from "./app/conn";
+import { conn } from "./app/conn.js";
 
 function mainMenu(){
     inquirer.prompt({
@@ -52,17 +52,17 @@ function mainMenu(){
 /* ## Common Queries
  * I wanted to show these as PROCEDURES in SQL. This should be the next best thing.
  */
-function findAllQuery(table){
-    return conn.query(`SELECT * FROM ${table}`);
+async function findAllQuery(table){
+    return await conn.query(`SELECT * FROM ${table}`);
 }
-function findOneQuery(table,id,field){
-    return conn.query(`SELECT ${field} FROM ${table} WHERE id = ?`,[id]);
+async function findOneQuery(table,id,field){
+    return await conn.query(`SELECT ${field} FROM ${table} WHERE id = ?`,[id]);
 }
-function updateQuery(table,id,field,value){
-    return conn.query(`UPDATE ${table} SET ${field} = ? WHERE id = ?`,[value,id]);
+async function updateQuery(table,id,field,value){
+    return await conn.query(`UPDATE ${table} SET ${field} = ? WHERE id = ?`,[value,id]);
 }
-function deleteQuery(table,id){
-    return conn.query(`DELETE FROM ${table} WHERE id=${id}`);
+async function deleteQuery(table,id){
+    return await conn.query(`DELETE FROM ${table} WHERE id=${id}`);
 }
 
 /* ## LIST Menu Methods 
@@ -71,8 +71,8 @@ function deleteQuery(table,id){
  */
 
 // TODO: List Departments as a menu
-function listDepartments(){
-    conn.query(`SELECT id, name FROM departments ORDER BY name ASC`).then((rows) => {
+async function listDepartments(){
+    await conn.query(`SELECT id, name FROM departments ORDER BY name ASC`).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: row.name };
         });
@@ -80,8 +80,8 @@ function listDepartments(){
 }
 
 // TODO: List Roles as a menu
-function listRoles(){
-    conn.query(`SELECT id, job_title FROM role ORDER BY job_title ASC`).then((rows) => {
+async function listRoles(){
+    await conn.query(`SELECT id, job_title FROM role ORDER BY job_title ASC`).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: row.name };
         });
@@ -90,8 +90,8 @@ function listRoles(){
 
 // TODO: List Roles in a Department as a menu
 // INNER JOIN department ON role.department_id = department.id      // Note: I'm just setting this here. It will be useful later.
-function listRolesInDepartment(department_id){
-    conn.query(`SELECT id, job_title FROM role WHERE role.department_id = ? ORDER BY job_title ASC`,[department_id]).then((rows) => {
+async function listRolesInDepartment(department_id){
+    await conn.query(`SELECT id, job_title FROM role WHERE role.department_id = ? ORDER BY job_title ASC`,[department_id]).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: row.name };
         });
@@ -99,8 +99,8 @@ function listRolesInDepartment(department_id){
 }
 
 // TODO: List Employees as a menu
-function listEmployees(){
-    conn.query(`SELECT id, first_name, last_name FROM employee ORDER BY last_name ASC, first_name ASC`).then((rows) => {
+async function listEmployees(){
+    await conn.query(`SELECT id, first_name, last_name FROM employee ORDER BY last_name ASC, first_name ASC`).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: `${row.first_name} ${row.last_name}` };
         });
@@ -108,16 +108,16 @@ function listEmployees(){
 }
 
 // TODO: List Managers as a menu (filtered employees)
-function listManagers(){
-    conn.query(`SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL ORDER BY last_name ASC, first_name ASC`).then((rows) => {
+async function listManagers(){
+    await conn.query(`SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL ORDER BY last_name ASC, first_name ASC`).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: `${row.first_name} ${row.last_name}` };
         });
     });
 };
 
-function listNonManagers(){
-    conn.query(`SELECT id, first_name, last_name FROM employee WHERE manager_id IS NOT NULL ORDER BY last_name ASC, first_name ASC`).then((rows) => {
+async function listNonManagers(){
+    await conn.query(`SELECT id, first_name, last_name FROM employee WHERE manager_id IS NOT NULL ORDER BY last_name ASC, first_name ASC`).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: `${row.first_name} ${row.last_name}` };
         });
@@ -125,8 +125,8 @@ function listNonManagers(){
 }
 
 // TODO: List Employees with a role
-function listEmployees(role_id){
-    conn.query(`SELECT id, first_name, last_name FROM employee WHERE role_id = ? ORDER BY last_name ASC, first_name ASC`,[role_id]).then((rows) => {
+async function listEmployeesByRole(role_id){
+    await conn.query(`SELECT id, first_name, last_name FROM employee WHERE role_id = ? ORDER BY last_name ASC, first_name ASC`,[role_id]).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: `${row.first_name} ${row.last_name}` };
         });
@@ -134,8 +134,8 @@ function listEmployees(role_id){
 }
 
 // TODO: List Employees in a department
-function listEmployees(department_id){
-    conn.query(`SELECT id, first_name, last_name FROM employee WHERE department_id = ? ORDER BY last_name ASC, first_name ASC`,[department_id]).then((rows) => {
+async function listEmployeesByDepartment(department_id){
+    await conn.query(`SELECT id, first_name, last_name FROM employee WHERE department_id = ? ORDER BY last_name ASC, first_name ASC`,[department_id]).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: `${row.first_name} ${row.last_name}` };
         });
@@ -143,8 +143,8 @@ function listEmployees(department_id){
 }
 
 // TODO: List Employees with a role in a department
-function listEmployees(role_id,department_id){
-    conn.query(`SELECT id, first_name, last_name FROM employee WHERE role_id = ? AND department_id = ? ORDER BY last_name ASC, first_name ASC`,[role_id,department_id]).then((rows) => {
+async function listEmployeesByRoleAndDepartment(role_id,department_id){
+    await conn.query(`SELECT id, first_name, last_name FROM employee WHERE role_id = ? AND department_id = ? ORDER BY last_name ASC, first_name ASC`,[role_id,department_id]).then((rows) => {
         return rows.map((row) => {
             return { id: row.id, name: `${row.first_name} ${row.last_name}` };
         });
@@ -197,7 +197,7 @@ function viewMenu(){
             // TODO: List all Managers
             // TODO: add more methods
         };
-        return tasks[answers.tasks]();
+        return tasks[answers.task]();
         // TODO: console.table here?
     });
 }
@@ -238,7 +238,7 @@ function addMenu(){
             "newEmployee" : newEmployee,
             "mainMenu": mainMenu
         };
-        return tasks[answers.tasks]();
+        return tasks[answers.task]();
     });
 }
 
@@ -286,7 +286,7 @@ function updateMenu(){
             // TODO: add more methods
             "mainMenu" : mainMenu
         };
-        return tasks[answers.tasks]();
+        return tasks[answers.task]();
     });
 }
 
@@ -326,7 +326,7 @@ function deleteMenu(){
             "newEmployee" : deleteEmployee,
             "mainMenu": mainMenu
         };
-        return tasks[answers.tasks]();
+        return tasks[answers.task]();
     });
 }
 
@@ -336,7 +336,7 @@ function deleteMenu(){
  * @method viewAllDepartments
  * @desc List all the departments in the database
  */
-function viewAllDepartments(){
+async function viewAllDepartments(){
     /*
     conn.query(`SELECT * FROM department`, (err,data) => {
         if(err) throw err;
@@ -344,7 +344,7 @@ function viewAllDepartments(){
         mainMenu();
     });
     */
-    findAllQuery("department").then((rows) => {
+    await findAllQuery("department").then((rows) => {
         console.table(rows);    
     });     // .catch()     // TODO: Add a catch later
     mainMenu();
@@ -354,7 +354,7 @@ function viewAllDepartments(){
  * @method viewAllRoles
  * @desc 
  */
-function viewAllRoles(){
+async function viewAllRoles(){
     /*
     conn.query(`SELECT * FROM role`, (err,data) => {
         if(err) throw err;
@@ -362,13 +362,13 @@ function viewAllRoles(){
         mainMenu();
     });
     */
-    findAllQuery("role").then((rows) => {
+    await findAllQuery("role").then((rows) => {
         console.table(rows);    
     });     // .catch()     // TODO: Add a catch later
     mainMenu();
 }
 
-function viewAllEmployees(){
+async function viewAllEmployees(){
     // TODO: we should list who their managers are
     /*
     conn.query(`SELECT * FROM employee`, (err,data) => {
@@ -377,7 +377,7 @@ function viewAllEmployees(){
         mainMenu();
     });
     */
-    findAllQuery("employee").then((rows) => {
+    await findAllQuery("employee").then((rows) => {
         console.table(rows);    
     });     // .catch()     // TODO: Add a catch later
     mainMenu();
@@ -385,7 +385,7 @@ function viewAllEmployees(){
 // TODO: Add more view methods
 
 /* ## ADD Menu */
-
+// TODO: await conn, this function should be async
 function addDepartment(){
     inquirer.prompt([{
         "name": "name",
@@ -400,6 +400,7 @@ function addDepartment(){
 }
 
 // TODO: Make sure job_title is used elsewhere
+// TODO: await conn, this function should be async
 function addRole(){
     inquirer.prompt([
         {
@@ -427,6 +428,7 @@ function addRole(){
     });
 }
 
+// TODO: await conn, this function should be async
 function addEmployee(){
     inquirer.prompt([
         {
@@ -471,6 +473,7 @@ function addEmployee(){
 
 // TODO: better define update methods
 // TODO: have updateDepartment have an id argument
+// TODO: await conn, this function should be async
 function updateDepartment(){
     inquirer.prompt([
         {
@@ -491,6 +494,7 @@ function updateDepartment(){
 
 //function updateDepartmentName(){}
 
+// TODO: await conn, this function should be async
 function updateRole(){
     inquirer.prompt([
         {
@@ -527,6 +531,7 @@ function updateRole(){
     });
 }
 
+// TODO: await conn, this function should be async
 function updateRoleJobTitle(id){
     inquirer.prompt([
         {
@@ -546,6 +551,7 @@ function updateRoleJobTitle(id){
     });
 }
 
+// TODO: await conn, this function should be async
 function updateRoleSalary(id){
     inquirer.prompt([
         {
@@ -565,6 +571,7 @@ function updateRoleSalary(id){
     });
 }
 
+// TODO: await conn, this function should be async
 function updateRoleDepartment(id){
     inquirer.prompt([
         {
@@ -584,6 +591,7 @@ function updateRoleDepartment(id){
     });
 }
 
+// TODO: await conn, this function should be async
 function updateEmployee(){
     inquirer.prompt([
         {
@@ -620,6 +628,7 @@ function updateEmployee(){
     });
 }
 
+// TODO: await conn, this function should be async
 function updateEmployeeName(id){
     inquirer.prompt([
         {
@@ -645,6 +654,7 @@ function updateEmployeeName(id){
     });
 }
 
+// TODO: await conn, this function should be async
 function updateEmployeeRole(id){
     inquirer.prompt([
         {
@@ -666,6 +676,7 @@ function updateEmployeeRole(id){
     });
 }
 
+// TODO: await conn, this function should be async
 function updateEmployeeManager(id){
     inquirer.prompt([
         {
@@ -690,6 +701,7 @@ function updateEmployeeManager(id){
 /* ## DELETE Menu */
 
 // TODO: We can probably factor this out
+// TODO: await conn, this function should be async
 function deleteDepartment(){
     inquirer.prompt([
         {
@@ -703,6 +715,7 @@ function deleteDepartment(){
 }
 
 // TODO: We can probably factor this out
+// TODO: await conn, this function should be async
 function deleteRole(){
     inquirer.prompt([
         {
@@ -716,6 +729,7 @@ function deleteRole(){
 }
 
 // TODO: We can probably factor this out
+// TODO: await conn, this function should be async
 function deleteEmployee(){
     inquirer.prompt([
         {
@@ -734,6 +748,7 @@ function deleteEmployee(){
  * @method exitProgram
  * @desc Ask the user if they would like to still use the program
  */
+// TODO: await conn, this function should be async
 function exitProgram(){
     inquirer.prompt([{
         "type": "confirm",
@@ -756,6 +771,7 @@ function exitProgram(){
  * @method main
  * @description the main method
  */
+// TODO: await conn, this function should be async
 function main(){
     mainMenu();
 }

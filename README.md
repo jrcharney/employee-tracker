@@ -126,10 +126,10 @@ Let's take into account the Entity-Relationship Diagram (a.k.a. ER Diagram or ER
 
 > Note: I had to use square brackets to denote `VARCHAR` size because mermaid would not accept parethesis.
 > Also, the bonuses are not mapped out in these diagrams.
+> UH OH! The ER diagram is not rendering on this page!
 
 ```mermaid
 erDiagram
-
     department {
         INT id PK "department id #"
         VARCHAR[30] name "department name"

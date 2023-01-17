@@ -7,7 +7,7 @@
 import config from "./config.js";
 import mariadb from "mariadb";
 
-export const conn = mariadb.createConnection({
+export const conn = await mariadb.createConnection({
     host: config.db.hostname,
     user: config.db.user,
     password: config.db.password,
